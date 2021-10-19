@@ -1,6 +1,8 @@
-package com.exist.exercise08.model;
+package com.exist.exercise08.model.employee;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -11,31 +13,36 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
+@Entity
 @Data
-@RequiredArgsConstructor
-@NoArgsConstructor(access=AccessLevel.PRIVATE, force=true)
+@NoArgsConstructor
 public class Employee {
     
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private final Long id;
+    private Long id;
 
     @NotNull
     @Size(min=2, message="first name must be at least 2 characters long")
-    private final String firstName;
+    @Setter
+    private String firstName;
 
     @NotNull
     @Size(min=2, message="middle name must be at least 2 characters long")
-    private final String middleName;
+    @Setter
+    private String middleName;
 
     @NotNull
     @Size(min=2, message="last name must be at least 2 characters long")
-    private final String lastName;
+    @Setter
+    private String lastName;
+
+    @Enumerated(EnumType.STRING)
+    @Setter
+    private Department department;
+
 
     
-    public static enum DEPARTMENT{
-        IT, ADMIN, HR, SALES
-    }
-
 }

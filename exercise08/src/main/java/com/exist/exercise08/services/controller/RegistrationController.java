@@ -1,17 +1,19 @@
 package com.exist.exercise08.services.controller;
 
-import java.util.Map;
 
+import javax.validation.Valid;
+
+import com.exist.exercise08.model.registration.RegistrationForm;
 import com.exist.exercise08.model.user.User;
 import com.exist.exercise08.services.SecurityUserDetailsService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/register")
@@ -24,15 +26,23 @@ public class RegistrationController {
     private PasswordEncoder passwordEncoder;
 
     @GetMapping
-    public String showRegistratioForm(){
+    public String showRegistrationForm(RegistrationForm registrationForm){
         return "register"; 
     }
 
-    @PostMapping //TODO add validation
-    public void processUserRegistrationForm(@RequestParam Map<String, String> body){
-        User user = new User(body.get("username"),passwordEncoder.encode(body.get("password"))); 
+    @PostMapping 
+    public String processUserRegistrationForm(
+        @Valid RegistrationForm form, BindingResult errors){
+
+        if (errors.hasErrors()) {
+            return "register";
+        }
+
+        User user = form.toUser(passwordEncoder);
+        // User user = new User(body.get("username"),passwordEncoder.encode(body.get("password"))); 
         user.setAccountNonLocked(true); 
         userDetailsManager.createUser(user); 
+        return "redirect:/";
     }
 
     

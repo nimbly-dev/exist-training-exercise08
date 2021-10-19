@@ -5,6 +5,7 @@ import java.util.Optional;
 import com.exist.exercise08.model.user.LoginAttempts;
 import com.exist.exercise08.model.user.User;
 import com.exist.exercise08.services.SecurityUserDetailsService;
+import com.exist.exercise08.services.data.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
