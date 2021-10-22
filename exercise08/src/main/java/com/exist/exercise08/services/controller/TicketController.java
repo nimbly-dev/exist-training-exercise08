@@ -7,6 +7,7 @@ import com.exist.exercise08.model.ticket.Ticket;
 import com.exist.exercise08.services.data.TicketRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,6 +40,7 @@ public class TicketController {
     }
 
     @PutMapping("/update-ticket-by-id")
+    @PreAuthorize("hasRole('ADMIN')")
     public Ticket updateTicketById(@RequestBody Ticket ticketNewValue, Long id){
         Optional<Ticket> ticketToUpdate = ticketRepo.findById(id);
         ticketToUpdate.get().setDescription(ticketNewValue.getDescription());
@@ -51,6 +53,7 @@ public class TicketController {
     }
 
     @DeleteMapping("/delete-ticket-by-id")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteTicketById(Long id){
         ticketRepo.deleteById(id);
     }

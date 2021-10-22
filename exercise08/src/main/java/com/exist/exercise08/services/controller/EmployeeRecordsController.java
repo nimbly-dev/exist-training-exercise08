@@ -10,17 +10,20 @@ import com.exist.exercise08.services.data.EmployeeRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-
-//TODO - ADD VALIDATION TO ENDPOINTS
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
+@RequestMapping("/api/employee")
 public class EmployeeRecordsController {
     
     @Autowired
@@ -28,10 +31,10 @@ public class EmployeeRecordsController {
 
     @PostMapping("/create-employee")
     public Employee createNewEmployeeDetails(@RequestBody Employee employee){
-        //TODO - ADD VALIDATION GUARD FOR NULL DEPARTMENT
         if(   StringUtils.isBlank(employee.getFirstName()) 
            || StringUtils.isBlank(employee.getMiddleName())
-           || StringUtils.isBlank(employee.getLastName()) ){
+           || StringUtils.isBlank(employee.getLastName()) 
+           || employee.getDepartment() == null){
                 throw new ResponseStatusException
                     (HttpStatus.BAD_REQUEST, "Name and Department must not be blank");
         } 
@@ -59,6 +62,7 @@ public class EmployeeRecordsController {
     }
 
     @PutMapping("/update-employee-by-id")
+    @PreAuthorize("hasRole('ADMIN')")
     public Employee updateEmployeeById(@RequestBody Employee employeeNewValue, Long id){
         Optional<Employee> employeeToUpdate = employeeRepo.findById(id);
 
@@ -68,10 +72,10 @@ public class EmployeeRecordsController {
         }
 
         //Checks for blank update input of names and department
-        //TODO - ADD VALIDATION GUARD FOR NULL DEPARTMENT
         if(   StringUtils.isBlank(employeeNewValue.getFirstName()) 
             || StringUtils.isBlank(employeeNewValue.getMiddleName())
-            || StringUtils.isBlank(employeeNewValue.getLastName()) ){
+            || StringUtils.isBlank(employeeNewValue.getLastName()) 
+            || employeeNewValue.getDepartment() == null){
                 throw new ResponseStatusException
                     (HttpStatus.BAD_REQUEST, "Name and Department must not be blank");
         } 
@@ -83,6 +87,7 @@ public class EmployeeRecordsController {
     }
 
     @DeleteMapping("/delete-employee-by-id")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteEmployeeById(Long id){
         Optional<Employee> employeeToDelete = employeeRepo.findById(id);
 
