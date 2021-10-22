@@ -5,11 +5,13 @@ import java.util.Optional;
 
 
 import com.exist.exercise08.model.employee.Employee;
+import com.exist.exercise08.model.payload.registration.MessageResponseDto;
 import com.exist.exercise08.services.data.EmployeeRepository;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,7 +32,7 @@ public class EmployeeRecordsController {
     private EmployeeRepository employeeRepo;
 
     @PostMapping("/create-employee")
-    public Employee createNewEmployeeDetails(@RequestBody Employee employee){
+    public ResponseEntity<?> createNewEmployeeDetails(@RequestBody Employee employee){
         if(   StringUtils.isBlank(employee.getFirstName()) 
            || StringUtils.isBlank(employee.getMiddleName())
            || StringUtils.isBlank(employee.getLastName()) 
@@ -38,32 +40,33 @@ public class EmployeeRecordsController {
                 throw new ResponseStatusException
                     (HttpStatus.BAD_REQUEST, "Name and Department must not be blank");
         } 
-        return employeeRepo.save(employee);
+        employeeRepo.save(employee);
+        return ResponseEntity.ok(employee);
     }
 
     @GetMapping("/get-employee-by-id")
-    public Optional<Employee> getEmployeeById(Long id) {
+    public ResponseEntity<?> getEmployeeById(Long id) {
         Optional<Employee> getEmployee = employeeRepo.findById(id);
         if(!getEmployee.isPresent()){
             throw new ResponseStatusException
                 (HttpStatus.NOT_FOUND, "Employee id " + id + " does not exist");
         }
-        return getEmployee;
+        return ResponseEntity.ok(getEmployee);
     }
 
     @GetMapping("/get-employee-list")
-    public List<Employee> getEmployeeList(){
+    public ResponseEntity<List<Employee>> getEmployeeList(){
         List<Employee> employeeList = (List<Employee>) employeeRepo.findAll();
         if(employeeList.isEmpty()){
             throw new ResponseStatusException
                 (HttpStatus.NOT_FOUND, "Employee list is currently empty");
         }
-        return (List<Employee>) employeeRepo.findAll();
+        return ResponseEntity.ok((List<Employee>) employeeRepo.findAll());
     }
 
     @PutMapping("/update-employee-by-id")
     @PreAuthorize("hasRole('ADMIN')")
-    public Employee updateEmployeeById(@RequestBody Employee employeeNewValue, Long id){
+    public ResponseEntity<?> updateEmployeeById(@RequestBody Employee employeeNewValue, Long id){
         Optional<Employee> employeeToUpdate = employeeRepo.findById(id);
 
         if(!employeeToUpdate.isPresent()){
@@ -83,12 +86,13 @@ public class EmployeeRecordsController {
         employeeToUpdate.get().setFirstName(employeeNewValue.getFirstName());
         employeeToUpdate.get().setFirstName(employeeNewValue.getMiddleName());
         employeeToUpdate.get().setFirstName(employeeNewValue.getLastName());
-        return employeeRepo.save(employeeToUpdate.get());
+        employeeRepo.save(employeeToUpdate.get());
+        return ResponseEntity.ok(new MessageResponseDto("Employee updated successfully!"));
     }
 
     @DeleteMapping("/delete-employee-by-id")
     @PreAuthorize("hasRole('ADMIN')")
-    public void deleteEmployeeById(Long id){
+    public ResponseEntity<?> deleteEmployeeById(Long id){
         Optional<Employee> employeeToDelete = employeeRepo.findById(id);
 
         if(!employeeToDelete.isPresent()){
@@ -97,6 +101,7 @@ public class EmployeeRecordsController {
         }
 
         employeeRepo.deleteById(employeeToDelete.get().getEmployeeId());
+        return ResponseEntity.ok(new MessageResponseDto("Employee deleted successfully!"));
     }
 
 }
