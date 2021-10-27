@@ -17,7 +17,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,7 @@ import lombok.RequiredArgsConstructor;
             @UniqueConstraint(columnNames = "email") 
        }        
 )
-@NoArgsConstructor
+@RequiredArgsConstructor
 @Data
 public class User{
     @Id

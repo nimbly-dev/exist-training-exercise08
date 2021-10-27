@@ -1,5 +1,6 @@
 package com.exist.exercise08.model.ticket;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -11,30 +12,30 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-
 import com.exist.exercise08.model.employee.Employee;
-
-import org.springframework.lang.Nullable;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "ticket")
 @Data
-@NoArgsConstructor
-public class Ticket {
+@RequiredArgsConstructor
+public class Ticket implements Serializable{
     
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    @Column(name = "ticket_number")
-    private Long ticketNumber;
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name = "ticket_id")
+    private Long id;
 
     @NotNull
     @Setter
@@ -53,12 +54,22 @@ public class Ticket {
     private Status status;
 
     //TODO - CHANGE FIELD NAME TO ASSIGNED EMPLOYEE
-    @OneToOne(mappedBy = "ticket", cascade = CascadeType.ALL, fetch = FetchType.LAZY
-                , optional = true)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "assignee_id", referencedColumnName = "employee_id")
     @Setter
-    private Employee employee;
+    private Employee assignedEmployee;
 
-    @OneToMany(mappedBy = "ticket")
-    @Nullable
-    private List<Employee> watchers;
+    // @OneToMany(mappedBy = "ticket")
+    // @Nullable
+    // private List<Employee> watchers;
+
+
+    public Ticket(String title, String description, Severity severity, Status status) {
+        this.title = title;
+        this.description = description;
+        this.severity = severity;
+        this.status = status;
+    }
+
+    
 }

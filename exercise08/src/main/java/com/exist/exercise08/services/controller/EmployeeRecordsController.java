@@ -5,6 +5,7 @@ import java.util.Optional;
 
 
 import com.exist.exercise08.model.employee.Employee;
+import com.exist.exercise08.model.employee.EmployeeDto;
 import com.exist.exercise08.model.payload.registration.MessageResponseDto;
 import com.exist.exercise08.services.data.EmployeeRepository;
 
@@ -32,7 +33,8 @@ public class EmployeeRecordsController {
     private EmployeeRepository employeeRepo;
 
     @PostMapping("/create-employee")
-    public ResponseEntity<?> createNewEmployeeDetails(@RequestBody Employee employee){
+    public ResponseEntity<?> createNewEmployeeDetails(@RequestBody EmployeeDto employee){
+
         if(   StringUtils.isBlank(employee.getFirstName()) 
            || StringUtils.isBlank(employee.getMiddleName())
            || StringUtils.isBlank(employee.getLastName()) 
@@ -40,8 +42,10 @@ public class EmployeeRecordsController {
                 throw new ResponseStatusException
                     (HttpStatus.BAD_REQUEST, "Name and Department must not be blank");
         } 
-        employeeRepo.save(employee);
-        return ResponseEntity.ok(employee);
+        Employee saveNewEmployee = new Employee(employee.getFirstName()
+            , employee.getMiddleName(), employee.getLastName(), employee.getDepartment());
+    
+        return ResponseEntity.ok(employeeRepo.save(saveNewEmployee));
     }
 
     @GetMapping("/get-employee-by-id")
@@ -64,6 +68,7 @@ public class EmployeeRecordsController {
         return ResponseEntity.ok((List<Employee>) employeeRepo.findAll());
     }
 
+    //TODO - Change to Employee DTO
     @PutMapping("/update-employee-by-id")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateEmployeeById(@RequestBody Employee employeeNewValue, Long id){
@@ -100,7 +105,7 @@ public class EmployeeRecordsController {
                 (HttpStatus.NOT_FOUND, "Employee id " + id + " does not exist");
         }
 
-        employeeRepo.deleteById(employeeToDelete.get().getEmployeeId());
+        employeeRepo.deleteById(employeeToDelete.get().getId());
         return ResponseEntity.ok(new MessageResponseDto("Employee deleted successfully!"));
     }
 
