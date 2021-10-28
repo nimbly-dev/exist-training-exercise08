@@ -19,6 +19,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import io.jsonwebtoken.JwtException;
+
 public class AuthTokenFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -58,11 +60,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
 
-
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
           return headerAuth.substring(7, headerAuth.length());
         }
-        //TODO - THROW CANNOT BE PARSED JWT
+        // throw new JwtException("Cannot ba parsed");
         return null;
     }
     

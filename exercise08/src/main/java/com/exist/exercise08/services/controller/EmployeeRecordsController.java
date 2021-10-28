@@ -7,7 +7,9 @@ import java.util.Optional;
 import com.exist.exercise08.model.employee.Employee;
 import com.exist.exercise08.model.employee.EmployeeDto;
 import com.exist.exercise08.model.payload.registration.MessageResponseDto;
+import com.exist.exercise08.model.ticket.Ticket;
 import com.exist.exercise08.services.data.EmployeeRepository;
+import com.exist.exercise08.services.data.TicketRepository;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ public class EmployeeRecordsController {
     @Autowired
     private EmployeeRepository employeeRepo;
 
+    @Autowired
+    private TicketRepository ticketRepo;
+
     @PostMapping("/create-employee")
     public ResponseEntity<?> createNewEmployeeDetails(@RequestBody EmployeeDto employee){
 
@@ -51,6 +56,12 @@ public class EmployeeRecordsController {
     @GetMapping("/get-employee-by-id")
     public ResponseEntity<?> getEmployeeById(Long id) {
         Optional<Employee> getEmployee = employeeRepo.findById(id);
+
+        // EmployeeDisplay displayEmployee = new EmployeeDisplay(getEmployee.get().getId()
+        // , getEmployee.get().getFirstName(), getEmployee.get().getMiddleName() ,
+        // getEmployee.get().getLastName(), getEmployee.get().getDepartment(), 
+        // getEmployee.get().getAssignedTickets(), getEmployee.get().getTicketsWatched());
+
         if(!getEmployee.isPresent()){
             throw new ResponseStatusException
                 (HttpStatus.NOT_FOUND, "Employee id " + id + " does not exist");
@@ -68,10 +79,9 @@ public class EmployeeRecordsController {
         return ResponseEntity.ok((List<Employee>) employeeRepo.findAll());
     }
 
-    //TODO - Change to Employee DTO
     @PutMapping("/update-employee-by-id")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> updateEmployeeById(@RequestBody Employee employeeNewValue, Long id){
+    public ResponseEntity<?> updateEmployeeById(@RequestBody EmployeeDto employeeNewValue, Long id){
         Optional<Employee> employeeToUpdate = employeeRepo.findById(id);
 
         if(!employeeToUpdate.isPresent()){
@@ -105,6 +115,12 @@ public class EmployeeRecordsController {
                 (HttpStatus.NOT_FOUND, "Employee id " + id + " does not exist");
         }
 
+        for(Ticket ticket: employeeToDelete.get().getAssignedTickets()){
+            employeeToDelete.get().removeAssignedTicket(ticket);
+            employeeToDelete.get().removeTicketsWatched(ticket);
+        }
+
+        //Safely delete the obj
         employeeRepo.deleteById(employeeToDelete.get().getId());
         return ResponseEntity.ok(new MessageResponseDto("Employee deleted successfully!"));
     }

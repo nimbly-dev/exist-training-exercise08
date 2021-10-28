@@ -29,4 +29,6 @@ public class TicketDto {
 
     @NotBlank
     private Long assignedEmployeeId;
+
+    private Long watchersEmployeeId;
 }

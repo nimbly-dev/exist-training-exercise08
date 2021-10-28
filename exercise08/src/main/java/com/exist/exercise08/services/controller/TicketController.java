@@ -29,8 +29,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
 
-//TODO - ADD VALIDATION TO ENDPOINTS
-//TODO - TEST ENDPOINTS ON POSTMAN
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/api/ticket")
@@ -48,15 +46,29 @@ public class TicketController {
             ticket.getTitle(), ticket.getDescription(), ticket.getSeverity(), 
             ticket.getStatus());
 
-        Optional<Employee> getEmployee = employeeRepo.findById(ticket.getAssignedEmployeeId());
-        
-        if(!getEmployee.isPresent()){
-            throw new ResponseStatusException
-                (HttpStatus.NOT_FOUND, "Employee id " + ticket.getAssignedEmployeeId() + " does not exist");
-        }
-        
-        saveTicket.setAssignedEmployee(getEmployee.get());
+        Optional<Employee> getAssignedEmployee = employeeRepo.findById(ticket.getAssignedEmployeeId());
 
+        if(!getAssignedEmployee.isPresent()){
+            throw new ResponseStatusException
+                (HttpStatus.NOT_FOUND, "Employee id " +
+                 " for assignee " + ticket.getAssignedEmployeeId() + " does not exist");
+        }
+        System.out.println("!!!!!TEST ADDED !!!!!");
+        //If watchers emp-id has an input
+        if(ticket.getWatchersEmployeeId() != null){
+            Optional<Employee> getEmployeeWatchers = employeeRepo.findById(ticket.getWatchersEmployeeId());
+            System.out.println("!!!!!WATCHERS ADDED !!!!!");
+            if(!getEmployeeWatchers.isPresent()){
+                throw new ResponseStatusException
+                    (HttpStatus.NOT_FOUND, "Employee id " + ticket.getWatchersEmployeeId() + " does not exist");
+            }else{
+                // saveTicket.getWatchers().add(getEmployeeWatchers.get());
+                saveTicket.addWatcher(getEmployeeWatchers.get());
+            }
+        }        
+        
+        saveTicket.setAssignedEmployee(getAssignedEmployee.get());
+ 
         //Persist to database        
         ticketRepo.save(saveTicket);
 
@@ -122,7 +134,20 @@ public class TicketController {
     @DeleteMapping("/delete-ticket-by-id")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteTicketById(Long id){
-        ticketRepo.deleteById(id);
+
+        Optional<Ticket> ticketToDelete = ticketRepo.findById(id);
+
+        for(Ticket ticket: ticketToDelete.get().getAssignedEmployee().getTicketsWatched()){
+            // ticket.get
+            // ticket.removeWatcher(ticket.getAssignedEmployee());
+            // ticket.getAssignedEmployee().removeAssignedTicket(ticket);
+            ticketToDelete.get().removeWatcher(ticket.getAssignedEmployee());
+            ticketToDelete.get().removeAssignedEmployee(ticket);
+            // ticket.removeWatcher(ticket.getAssignedEmployee());
+        }
+
+        // ticketRepo.delete(ticketToDelete.get());
+        ticketRepo.deleteById(ticketToDelete.get().getId());
         return ResponseEntity.ok(new MessageResponseDto("Ticket deleted successfully!"));
     }    
 
