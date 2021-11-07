@@ -1,0 +1,56 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" >
+
+  <label for="ticketTitle">Ticket title:</label><br>
+  <input type="text" name="title"formControlName="title" ><br>
+
+  <label for="description">Description of Ticket:</label><br>
+  <textarea  name="description" rows="4" cols="50" formControlName="description">
+
+  </textarea> <br>
+
+  <label for="severity">Choose Severity </label>:
+  <select name="severity" formControlName="severity">
+      <option [value]="severity.value" *ngFor="let severity of severity | keyvalue">
+        {{severity.value}}
+      </option>
+  </select><br> <br>
+
+  <label for="status">Choose Status </label>:
+  <select name="status" formControlName="status" >
+      <option [value]="status.value" *ngFor="let status of status | keyvalue">
+        {{status.value}}
+      </option>
+  </select><br> <br>
+
+  <label for="assignedEmployee">Choose Assigned Employee </label>:
+  <select name="assignedEmployee"  formControlName="assignedEmployee" >
+      <option [value]="employee.id" *ngFor="let employee of employeeList">
+        {{employee.id}} - {{employee.firstName}} {{employee.middleName}} {{employee.lastName}} | {{employee.department}}
+      </option>
+  </select><br> <br>
+
+  <label for="watchers">Choose Watchers </label>:
+  <select name="watchers" (change)="onChange($any($event.target).value)">
+      <option selected="selected" disabled>
+         Choose Watchers
+      </option>
+      <option [value]="employee.id" *ngFor="let employee of employeeList">
+        {{employee.id}} - {{employee.firstName}} {{employee.middleName}} {{employee.lastName}} | {{employee.department}}
+      </option>
+  </select> <br>
+  <button type="button" (click)="addWatcherToWatchersArray()">Add Watcher</button>
+
+  <h3>Watchers to be Added: </h3>
+  <!-- <h3>Watchers: </h3>
+  <section *ngIf="displayWatchers.length !== 0">
+    <div *ngFor="let watcher of displayWatchers">
+     {{watcher.id}} - {{watcher.firstName}} {{watcher.lastName}}
+    </div>
+  </section> -->
+
+  <br> <br>
+
+  <a [href]="'/ticket'">Go Back</a> <br>
+  <button type="submit">Submit</button>
+
+</form>

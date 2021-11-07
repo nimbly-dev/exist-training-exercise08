@@ -1,0 +1,22 @@
+<form [formGroup]="form"  (ngSubmit)="onSubmit()">
+  <label for="firstName">First name:</label><br>
+  <input type="text" name="firstName" formControlName="firstName"><br>
+
+  <label for="middleName">Middle name:</label><br>
+  <input type="text" name="middleName" formControlName="middleName"><br>
+
+  <label for="lastName">Last name:</label><br>
+  <input type="text" name="lastName" formControlName="lastName"><br>
+
+  <label for="departments">Choose Department </label>:
+  <select name="department" formControlName="department">
+      <option [value]="department.value" *ngFor="let department of departments | keyvalue">
+        {{department.value}}
+      </option>
+  </select>
+  <br>
+  <button type="submit">Add Employee</button>
+
+  <br>
+  <a [href]="'/employee'">Go Back</a>
+</form>

@@ -1,0 +1,64 @@
+<h3>Ticket ID: {{ticket.id}}</h3>
+<form [formGroup]="form" (ngSubmit)="onSubmit($event.submitter.id)">
+
+  <label for="ticketTitle">Ticket title:</label><br>
+  <input type="text" [value]="ticket.title" formControlName="ticketTitle"><br>
+
+  <label for="ticketDesc">Description of Ticket:</label><br>
+  <textarea id="ticketDesc" name="ticketDesc" rows="4" cols="50" formControlName="ticketDesc">
+    {{ticket.description}}
+  </textarea> <br>
+
+  <label for="severity">Severity </label>:
+  <select name="severity" formControlName="severity">
+      <option [value]="severity.value" *ngFor="let severity of severity | keyvalue"
+        [selected]="ticket.severity == severity.value">
+        {{severity.value}}
+      </option>
+  </select> <br>
+
+  <label for="status">Status </label>:
+  <select name="status" formControlName="status">
+      <option [value]="status.value" *ngFor="let status of status | keyvalue"
+        [selected]="ticket.status == status.value">
+        {{status.value}}
+      </option>
+  </select> <br>
+
+  <label for="assignedEmployee">Choose Assigned Employee </label>:
+  <select name="assignedEmployee" formControlName="assignedEmployee"  >
+      <option [value]="employee.id" *ngFor="let employee of employeeList"
+        [selected]="assignedEmployee.id === employee.id" >
+        {{employee.id}} - {{employee.firstName}} {{employee.middleName}} {{employee.lastName}} | {{employee.department}}
+      </option>
+  </select><br> <br>
+
+
+  <label for="watchers">Choose Watchers </label>:
+  <select name="watchers"  (change)="onChange($any($event.target).value)">
+      <option selected="selected" disabled>
+        Choose Watchers
+      </option>
+      <option [value]="employee.id" *ngFor="let employee of employeeList" >
+        {{employee.id}} - {{employee.firstName}} {{employee.middleName}} {{employee.lastName}} | {{employee.department}}
+      </option>
+  </select><br> <br>
+  <button type="button" (click)="addWatcherToWatchersArray()">Add Watcher</button>
+
+
+  <h4>Current watchers:</h4>
+  <ul *ngFor="let employee of watchers">
+    <li>
+      Employee ID: {{employee.id}} <br>
+      Employee Name: {{employee.firstName}} {{employee.middleName}} {{employee.lastName}} <br>
+      Employee Department: {{employee.department}} <br>
+    </li>
+  </ul>
+
+  <button type="submit" id="UPDATE_TICKET" value="UPDATE_TICKET">UPDATE EMPLOYEE</button>
+  |
+  <button type="submit" id="DELETE_TICKET">DELETE EMPLOYEE</button>
+
+  <br>
+  <a [href]="'/ticket'">Go Back</a>
+</form>

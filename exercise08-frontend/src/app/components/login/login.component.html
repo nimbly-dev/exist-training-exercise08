@@ -1,0 +1,15 @@
+<h1>Signin</h1>
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <div>
+    <label for="username"> Username </label>
+    <input id="username" type="text" formControlName="username"/>
+  </div>
+
+  <div>
+    <label for="password"> Password </label>
+    <input id="password" type="password" formControlName="password"/>
+  </div>
+
+  <button class="button" type="submit">Signin</button><br>
+  <a [href]="'/signup'">Go to Signup</a>
+</form>
