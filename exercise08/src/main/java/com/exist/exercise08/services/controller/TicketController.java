@@ -1,7 +1,10 @@
 package com.exist.exercise08.services.controller;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import com.exist.exercise08.model.employee.Employee;
 import com.exist.exercise08.model.payload.registration.MessageResponseDto;
@@ -54,17 +57,29 @@ public class TicketController {
                  " for assignee " + ticket.getAssignedEmployeeId() + " does not exist");
         }
         System.out.println("!!!!!TEST ADDED !!!!!");
+        
         //If watchers emp-id has an input
         if(ticket.getWatchersEmployeeId() != null){
-            Optional<Employee> getEmployeeWatchers = employeeRepo.findById(ticket.getWatchersEmployeeId());
-            System.out.println("!!!!!WATCHERS ADDED !!!!!");
-            if(!getEmployeeWatchers.isPresent()){
-                throw new ResponseStatusException
-                    (HttpStatus.NOT_FOUND, "Employee id " + ticket.getWatchersEmployeeId() + " does not exist");
-            }else{
-                // saveTicket.getWatchers().add(getEmployeeWatchers.get());
-                saveTicket.addWatcher(getEmployeeWatchers.get());
-            }
+            Set<Employee> employeeWatchers = new HashSet<Employee>();
+            ticket.getWatchersEmployeeId()
+                .stream()
+                .forEach(id->{
+                    Optional<Employee> watcherEmployee = employeeRepo.findById(id);
+                    if(!watcherEmployee.isPresent()){
+                        throw new ResponseStatusException
+                            (HttpStatus.NOT_FOUND, "Employee id " + id + " does not exist");
+                    }else{
+                        employeeWatchers.add(watcherEmployee.get());
+                    }
+                });
+
+            //Add the Watchers
+            employeeWatchers.stream().forEach((employee)->{
+                saveTicket.addWatcher(employee);
+            });
+
+            // saveTicket.getWatchers().add(getEmployeeWatchers.get());
+            // saveTicket.addWatcher(employeeWatchers);
         }        
         
         saveTicket.setAssignedEmployee(getAssignedEmployee.get());
@@ -84,7 +99,53 @@ public class TicketController {
             throw new ResponseStatusException
                 (HttpStatus.NOT_FOUND, "Ticket id " + id + " does not exist");
         }
-        return ResponseEntity.ok(getTicket);
+        return ResponseEntity.ok(getTicket.get());
+    }
+
+    @GetMapping("/get-assigned-employee-by-id")
+    public ResponseEntity<?> getAssignedEmployeeById(Long id){
+        Optional<Ticket> getTicket = ticketRepo.findById(id);
+
+        if(!getTicket.isPresent()){
+            throw new ResponseStatusException
+                (HttpStatus.NOT_FOUND, "Ticket id " + id + " does not exist");
+        }
+        Employee employee = new Employee();
+        employee.setId(getTicket.get().getAssignedEmployee().getId());
+        employee.setFirstName(getTicket.get().getAssignedEmployee().getFirstName());
+        employee.setMiddleName(getTicket.get().getAssignedEmployee().getMiddleName());
+        employee.setLastName(getTicket.get().getAssignedEmployee().getLastName());
+        employee.setDepartment(getTicket.get().getAssignedEmployee().getDepartment());
+        employee.setAssignedTickets(getTicket.get().getAssignedEmployee().getAssignedTickets());
+        employee.setTicketsWatched(getTicket.get().getAssignedEmployee().getTicketsWatched());
+
+        return ResponseEntity.ok(employee);
+    }
+
+    @GetMapping("/get-watchers-by-id")
+    public ResponseEntity<?> getWatchersById(Long id){
+        Optional<Ticket> getTicket = ticketRepo.findById(id);
+
+        if(!getTicket.isPresent()){
+            throw new ResponseStatusException
+                (HttpStatus.NOT_FOUND, "Ticket id " + id + " does not exist");
+        }
+
+        List<Employee> employeeWatchers = new ArrayList<Employee>(); 
+       
+        for (Employee em : getTicket.get().getWatchers()) {
+            Employee employee = new Employee();
+            employee.setId(em.getId());
+            employee.setFirstName(em.getFirstName());
+            employee.setMiddleName(em.getMiddleName());
+            employee.setLastName(em.getLastName());
+            employee.setDepartment(em.getDepartment());
+            employee.setAssignedTickets(em.getAssignedTickets());
+            employee.setTicketsWatched(em.getTicketsWatched());
+            employeeWatchers.add(employee);
+        }
+
+        return ResponseEntity.ok(employeeWatchers);        
     }
 
 
@@ -100,6 +161,7 @@ public class TicketController {
         return ResponseEntity.ok(ticketLists);
     }
 
+    //TODO - CHANGE ASSIGNED PERSON AND ADD MULTIPLE WATCHERS
     @PutMapping("/update-ticket-by-id")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateTicketById(@RequestBody TicketDto ticketNewValue, Long id){
@@ -119,14 +181,32 @@ public class TicketController {
         if(StringUtils.isBlank(ticketNewValue.getTitle())
             || StringUtils.isBlank(ticketNewValue.getDescription())
             || ticketNewValue.getSeverity() == null
-            || ticketNewValue.getStatus() == null)
+            || ticketNewValue.getStatus() == null){
+                throw new ResponseStatusException
+                (HttpStatus.BAD_REQUEST, "Inputs must not be empty");
+        }
 
-        ticketToUpdate.get().setDescription(ticketNewValue.getDescription());
         ticketToUpdate.get().setTitle(ticketNewValue.getTitle());
+        ticketToUpdate.get().setDescription(ticketNewValue.getDescription());
         ticketToUpdate.get().setSeverity(ticketNewValue.getSeverity());
         ticketToUpdate.get().setStatus(ticketNewValue.getStatus());
         ticketToUpdate.get().setAssignedEmployee(findEmployee.get());
-        // ticketToUpdate.get().setWatchers(ticketNewValue.getWatchers());
+        
+        Set<Employee> watchers = new HashSet<Employee>();
+        ticketNewValue.getWatchersEmployeeId()
+            .stream()
+            .forEach((employee)->{
+                Optional<Employee> watcherEmployee = employeeRepo.findById(id);
+                if(!watcherEmployee.isPresent()){
+                    throw new ResponseStatusException
+                        (HttpStatus.NOT_FOUND, "Employee id " + id + " does not exist");
+                }else{
+                    watchers.add(watcherEmployee.get());
+                }
+            });
+
+        // watchers.add(employeeRepo.findById(ticketNewValue.getWatchersEmployeeId()).get());
+        ticketToUpdate.get().setWatchers(watchers);
         ticketRepo.save(ticketToUpdate.get());
         return ResponseEntity.ok(new MessageResponseDto("Ticket updated successfully!"));
     }
@@ -137,17 +217,19 @@ public class TicketController {
 
         Optional<Ticket> ticketToDelete = ticketRepo.findById(id);
 
-        for(Ticket ticket: ticketToDelete.get().getAssignedEmployee().getTicketsWatched()){
-            // ticket.get
-            // ticket.removeWatcher(ticket.getAssignedEmployee());
-            // ticket.getAssignedEmployee().removeAssignedTicket(ticket);
-            ticketToDelete.get().removeWatcher(ticket.getAssignedEmployee());
-            ticketToDelete.get().removeAssignedEmployee(ticket);
-            // ticket.removeWatcher(ticket.getAssignedEmployee());
-        }
-
+        // for(Ticket ticket: ticketToDelete.get().getAssignedEmployee().getTicketsWatched()){
+        //     // ticket.get
+        //     // ticket.removeWatcher(ticket.getAssignedEmployee());
+        //     // ticket.getAssignedEmployee().removeAssignedTicket(ticket);
+        //     ticketToDelete.get().removeWatcher(ticket.getAssignedEmployee());
+        //     ticketToDelete.get().removeAssignedEmployee(ticket);
+        //     // ticket.removeWatcher(ticket.getAssignedEmployee());
+        // }
+        ticketToDelete.get().getAssignedEmployee().removeAssignedTicket(ticketToDelete.get());
+        ticketToDelete.get().getWatchers().clear();
         // ticketRepo.delete(ticketToDelete.get());
-        ticketRepo.deleteById(ticketToDelete.get().getId());
+        // ticketRepo.deleteById(ticketToDelete.get().getId());
+        ticketRepo.delete(ticketToDelete.get());
         return ResponseEntity.ok(new MessageResponseDto("Ticket deleted successfully!"));
     }    
 

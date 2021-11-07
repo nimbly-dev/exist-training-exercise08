@@ -99,8 +99,9 @@ public class EmployeeRecordsController {
         } 
         
         employeeToUpdate.get().setFirstName(employeeNewValue.getFirstName());
-        employeeToUpdate.get().setFirstName(employeeNewValue.getMiddleName());
-        employeeToUpdate.get().setFirstName(employeeNewValue.getLastName());
+        employeeToUpdate.get().setMiddleName(employeeNewValue.getMiddleName());
+        employeeToUpdate.get().setLastName(employeeNewValue.getLastName());
+        employeeToUpdate.get().setDepartment(employeeNewValue.getDepartment());
         employeeRepo.save(employeeToUpdate.get());
         return ResponseEntity.ok(new MessageResponseDto("Employee updated successfully!"));
     }

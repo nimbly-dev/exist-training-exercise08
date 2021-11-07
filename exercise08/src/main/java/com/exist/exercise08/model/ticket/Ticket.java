@@ -27,7 +27,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -65,17 +64,15 @@ public class Ticket implements Serializable{
     private Status status;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "assignee_id", referencedColumnName = "employee_id")
     @JsonBackReference
     private Employee assignedEmployee;
 
     @ManyToMany
-    @JsonIgnore
-    @JsonBackReference
     @JoinTable(name = "watchers" ,
            joinColumns = @JoinColumn(name = "ticket_id"),
            inverseJoinColumns = @JoinColumn(name="employee_id"))
+    @JsonBackReference
     Set<Employee> watchers = new HashSet<>();
 
 

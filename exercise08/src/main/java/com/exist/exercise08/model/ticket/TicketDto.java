@@ -1,5 +1,8 @@
 package com.exist.exercise08.model.ticket;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotBlank;
@@ -30,5 +33,5 @@ public class TicketDto {
     @NotBlank
     private Long assignedEmployeeId;
 
-    private Long watchersEmployeeId;
+    private Set<Long> watchersEmployeeId = new HashSet<Long>();
 }

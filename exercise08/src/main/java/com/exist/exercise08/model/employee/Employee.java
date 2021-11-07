@@ -2,6 +2,7 @@ package com.exist.exercise08.model.employee;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -69,9 +70,11 @@ public class Employee implements Serializable{
     @OneToMany(mappedBy = "assignedEmployee", fetch = FetchType.LAZY, cascade = CascadeType.ALL
     ,orphanRemoval = true)
     @Nullable
+    @JsonManagedReference
     private Set<Ticket> assignedTickets;
 
     @ManyToMany(mappedBy = "watchers", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
     Set<Ticket> ticketsWatched = new HashSet<>();
 
     public Employee(String firstName,String middleName,String lastName,
@@ -96,18 +99,18 @@ public class Employee implements Serializable{
 
 
     public void addTicketsWatched(Ticket ticket){
-        this.ticketsWatched.add(ticket);
+        ticketsWatched.add(ticket);
         ticket.getWatchers().add(this);
     }
 
     public void removeTicketsWatched(Ticket ticket){
-        this.ticketsWatched.remove(ticket);
+        ticketsWatched.remove(ticket);
         ticket.getWatchers().remove(this);
     }
 
-    public void removeAssignedTicket(Ticket ticket){
-        this.assignedTickets.remove(ticket);
-        ticket.setAssignedEmployee(null);
+    public void removeAssignedTicket(Ticket ticketToDelete){
+        assignedTickets.remove(ticketToDelete);
+        ticketToDelete.setAssignedEmployee(null);
     }
 
     @JsonManagedReference

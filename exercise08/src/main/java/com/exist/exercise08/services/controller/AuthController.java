@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -62,7 +62,6 @@ public class AuthController {
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String jwt = jwtUtils.generateJwtToken(authentication);
-
 		
 		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 		
@@ -78,6 +77,7 @@ public class AuthController {
 												 roles));
 	}
 
+	@CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/signup") //TODO - RE-STUDY THIS METHOD
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequestDto signUpRequest) {
 		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
@@ -91,6 +91,15 @@ public class AuthController {
 					.badRequest()
 					.body(new MessageResponseDto("Error: Email is already in use!"));
 		}
+
+		if(signUpRequest.getUsername().isEmpty() ||
+		   signUpRequest.getPassword().isEmpty() ||
+		   signUpRequest.getEmail().isEmpty()    ||
+		   signUpRequest.getRole().isEmpty()){
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponseDto("Error: inputs must not be empty"));
+		}		
 
 		// Create new user's account
 		User user = new User(signUpRequest.getUsername(), 
