@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { NewTicket } from '../model/addNewTicketDto';
-import { Employee } from '../model/employee';
+import { NewTicket } from '../model/ticket/addNewTicketDto';
+import { Employee } from '../model/employee/employee';
 import { Ticket_URL } from '../model/string_endpoints/ticket_urls';
-import { Ticket } from '../model/ticket';
+import { Ticket } from '../model/ticket/ticket';
 
 @Injectable({
   providedIn: 'root'

@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from 'src/app/model/user';
+import { User } from 'src/app/model/auth/user';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 
 @Component({

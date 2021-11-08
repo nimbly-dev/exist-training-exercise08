@@ -18,6 +18,7 @@ import { TicketTableComponent } from './components/ticket-table/ticket-table.com
 import { TicketDetailComponent } from './components/ticket-table/ticket-detail/ticket-detail.component';
 import { TicketFormComponent } from './components/ticket-table/ticket-form/ticket-form.component';
 import { CommonModule } from '@angular/common';
+import { ErrorPageComponent } from './components/error-page/error-page.component';
 
 
 @NgModule({
@@ -32,6 +33,7 @@ import { CommonModule } from '@angular/common';
     TicketTableComponent,
     TicketDetailComponent,
     TicketFormComponent,
+    ErrorPageComponent,
   ],
   imports: [
     BrowserModule,

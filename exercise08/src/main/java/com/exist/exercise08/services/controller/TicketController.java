@@ -161,7 +161,6 @@ public class TicketController {
         return ResponseEntity.ok(ticketLists);
     }
 
-    //TODO - CHANGE ASSIGNED PERSON AND ADD MULTIPLE WATCHERS
     @PutMapping("/update-ticket-by-id")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateTicketById(@RequestBody TicketDto ticketNewValue, Long id){

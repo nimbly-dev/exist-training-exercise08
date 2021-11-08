@@ -24,6 +24,17 @@ Employee ID: {{employee.id}}
 
   <br>
 
+  <label for="assignedTicket">Choose Assigned Employee </label>:
+  <select name="assignedTicket" (change)="onChangeAssignedTicketInput($any($event.target).value)">
+    <option selected="selected" disabled>
+      Choose Assigned Tickets
+    </option>
+      <option [value]="ticket.id" *ngFor="let ticket of ticketList">
+         {{ticket.id}} - {{ticket.title}}
+      </option>
+  </select><br>
+  <button type="button" (click)="assignTicketToEmployee()">Assign new ticket</button>
+
   <h3>Tickets Assigned:</h3>
   <ul *ngFor="let ticket of employee.assignedTickets">
     <li>
@@ -31,7 +42,10 @@ Employee ID: {{employee.id}}
       Ticket Title: {{ticket.title}} <br>
       Ticket Severity: {{ticket.severity}} <br>
       Ticket Status: {{ticket.status}} <br>
-      Action: <button type="button">UPDATE</button>|<button type="button">DELETE</button>
+      Action:
+      <br>
+      <button type="button" (click)="removeAssignedTicket(ticket.id)" disabled>REMOVE</button>
+      <br>
     </li>
   </ul>
 
@@ -44,7 +58,7 @@ Employee ID: {{employee.id}}
       Ticket Title: {{ticket.title}} <br>
       Ticket Severity: {{ticket.severity}} <br>
       Ticket Status: {{ticket.status}} <br>
-      Action: <button type="button">UPDATE</button>|<button type="button">DELETE</button>
+      Action: <button type="button"  (click)="removeWatcher(ticket.id)">REMOVE</button>
     </li>
   </ul>
 

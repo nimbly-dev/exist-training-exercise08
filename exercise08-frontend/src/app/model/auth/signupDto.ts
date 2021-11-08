@@ -3,5 +3,5 @@ export interface SignupDto {
     username?: string
     password?: string
     email?: string
-    roles?: string[]
+    role?: string[]
 }

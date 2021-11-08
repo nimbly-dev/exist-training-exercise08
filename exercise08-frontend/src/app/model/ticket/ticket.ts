@@ -1,4 +1,4 @@
-import { Employee } from "./employee";
+import { Employee } from "../employee/employee";
 
 export interface Ticket{
   id?: bigint

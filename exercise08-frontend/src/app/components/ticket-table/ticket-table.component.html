@@ -8,8 +8,6 @@
     <th>Description</th>
     <th>Severity</th>
     <th>Status</th>
-    <th>Assigned Employees</th>
-    <th>Watchers</th>
     <tr>
       <td>
         <a [href]="'ticket/'+ticket.id">{{ticket.id}}</a>
@@ -25,30 +23,6 @@
       </td>
       <td>
         {{ticket.status}}
-      </td>
-
-      <td>
-        <span *ngIf='!ticket.assignedEmployee?.length;else ticketsAssignedEmployee'>
-          Empty
-        </span>
-
-        <ng-template #ticketsAssignedEmployee>
-          <span *ngFor="let employee of ticket.assignedTickets">
-            {{employee.firstName}} {{employee.lastName}}
-          </span>
-        </ng-template>
-      </td>
-
-      <td>
-        <span *ngIf='!ticket.watchers?.length;else ticketswatchers'>
-          Empty
-        </span>
-
-        <ng-template #ticketswatchers>
-          <span *ngFor="let employee of ticket.watchers">
-            {{employee.firstName}} {{employee.lastName}}
-          </span>
-        </ng-template>
       </td>
 
     </tr>

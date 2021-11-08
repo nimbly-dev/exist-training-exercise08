@@ -1,10 +1,10 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Employee } from 'src/app/model/employee';
-import { Ticket } from 'src/app/model/ticket';
-import { User } from 'src/app/model/user';
+import { Employee } from 'src/app/model/employee/employee';
+import { User } from 'src/app/model/auth/user';
 import { TicketService } from 'src/app/services/ticket.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
+import { Ticket } from 'src/app/model/ticket/ticket';
 
 @Component({
   selector: 'app-ticket-table',

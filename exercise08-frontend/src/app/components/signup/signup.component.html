@@ -22,7 +22,7 @@
     <div *ngFor="let role of Roles">
       <label>
         <input type="checkbox" [value]="role.value" [id]="role.id" [name]="role.id"
-          (change)="onChange($event)" />
+          (change)="onChange(role.value,$event)" />
           {{role.value}}
       </label>
     </div>

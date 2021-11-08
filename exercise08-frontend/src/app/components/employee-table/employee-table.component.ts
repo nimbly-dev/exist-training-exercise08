@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { Employee } from 'src/app/model/employee';
-import { User } from 'src/app/model/user';
+import { Employee } from 'src/app/model/employee/employee';
+import { User } from 'src/app/model/auth/user';
 import { EmployeeService } from 'src/app/services/employee.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 

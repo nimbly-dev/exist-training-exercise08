@@ -3,7 +3,7 @@ package com.exist.exercise08.services.controller;
 import java.util.List;
 import java.util.Optional;
 
-
+import com.exist.exercise08.model.employee.AddAssignedTicketDto;
 import com.exist.exercise08.model.employee.Employee;
 import com.exist.exercise08.model.employee.EmployeeDto;
 import com.exist.exercise08.model.payload.registration.MessageResponseDto;
@@ -104,6 +104,89 @@ public class EmployeeRecordsController {
         employeeToUpdate.get().setDepartment(employeeNewValue.getDepartment());
         employeeRepo.save(employeeToUpdate.get());
         return ResponseEntity.ok(new MessageResponseDto("Employee updated successfully!"));
+    }
+
+    @PostMapping("/add-assigned-ticket")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> addAssignedTicketToEmployee(@RequestBody AddAssignedTicketDto addAssignedTicketDto){
+        Optional<Employee> employee = employeeRepo.findById(addAssignedTicketDto.getEmployeeId());
+        Optional<Ticket> ticketAssigned = ticketRepo.findById(addAssignedTicketDto.getTicketIdAssigned());
+
+
+        if(!employee.isPresent()){
+            throw new ResponseStatusException
+                (HttpStatus.NOT_FOUND, "Employee id " + addAssignedTicketDto.getEmployeeId() + " does not exist");
+        }
+
+        if(!ticketAssigned.isPresent()){
+            throw new ResponseStatusException
+                (HttpStatus.NOT_FOUND, "Ticket id " + addAssignedTicketDto.getTicketIdAssigned() + " does not exist");
+        }
+
+        if(employee.get().getAssignedTickets().contains(ticketAssigned.get())){
+            throw new ResponseStatusException
+             (HttpStatus.NOT_FOUND, "Ticket id " + addAssignedTicketDto.getTicketIdAssigned() + " already assigned");
+        }
+
+        employee.get().getAssignedTickets().add(ticketAssigned.get());
+
+        return ResponseEntity.ok(new MessageResponseDto("Ticket Assigned successfully changed"));
+    }
+
+    @DeleteMapping("/remove-ticket-watched-by-id")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> removeTicketWatched(Long employeeId, Long ticketIdWatched){
+        Optional<Employee> employee = employeeRepo.findById(employeeId);
+        Optional<Ticket> ticketWatched = ticketRepo.findById(ticketIdWatched);
+
+
+        if(!employee.isPresent()){
+            throw new ResponseStatusException
+                (HttpStatus.NOT_FOUND, "Employee id " + employeeId + " does not exist");
+        }
+
+        if(!ticketWatched.isPresent()){
+            throw new ResponseStatusException
+                (HttpStatus.NOT_FOUND, "Watched Ticket id " + ticketIdWatched + " does not exist");
+        }
+
+        ticketWatched.get().removeWatcher(employee.get());
+        // employee.get().removeTicketsWatched(ticketWatched.get());
+        employeeRepo.save(employee.get());
+
+        // employee.get().removeTicketsWatched(ticketWatched.get());
+        // ticketRepo.save(ticketWatched.get());
+
+        return ResponseEntity.ok(new MessageResponseDto("Ticket watched successfully removed"));
+    }
+
+    @DeleteMapping("/remove-assigned-ticket-by-id")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> removeAssignedTicket(Long employeeId, Long ticketIdWatched){
+        Optional<Employee> employee = employeeRepo.findById(employeeId);
+        Optional<Ticket> ticketAssigned = ticketRepo.findById(ticketIdWatched);
+
+        if(!employee.isPresent()){
+            throw new ResponseStatusException
+                (HttpStatus.NOT_FOUND, "Employee id " + employeeId + " does not exist");
+        }
+
+        if(!ticketAssigned.isPresent()){
+            throw new ResponseStatusException
+                (HttpStatus.NOT_FOUND, "Watched Ticket id " + ticketIdWatched + " does not exist");
+        }
+
+        // ticketAssigned.get().removeAssignedEmployee(ticket);
+        employee.get().getAssignedTickets().remove(ticketAssigned.get());
+        ticketAssigned.get().setAssignedEmployee(null);
+
+        employeeRepo.save(employee.get());
+
+        // ticketAssigned.get().setAssignedEmployee(null);
+        // ticketRepo.save(ticketAssigned.get());
+
+        return ResponseEntity.ok(new MessageResponseDto("Assigned Ticket successfully deleted"));
+
     }
 
     @DeleteMapping("/delete-employee-by-id")

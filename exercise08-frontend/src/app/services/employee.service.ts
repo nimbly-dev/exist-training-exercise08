@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Employee } from '../model/employee';
+import { AssignTicketToEmployeeDto } from '../model/employee/assignTicketToEmployeeDto';
+import { Employee } from '../model/employee/employee';
 import { Employee_URL } from '../model/string_endpoints/employee_urls';
 
 @Injectable({
@@ -27,6 +28,20 @@ export class EmployeeService {
 
   addNewEmployee(employee: any): Observable<any>{
     return this.http.post<any>(Employee_URL.createEmployee,employee)
+  }
+
+  removeTicketWatched(employeeId: Number, ticketIdWatched: Number){
+    return this.http.delete<any>(Employee_URL.removeTicketWatchedByID
+      +"employeeId="+employeeId+"&ticketIdWatched="+ticketIdWatched)
+  }
+
+  removeAssignedTicketById(employeeId: Number, ticketIdWatched: Number){
+    return this.http.delete<any>(Employee_URL.removeAssignedTicketById
+      +"employeeId="+employeeId+"&ticketIdWatched="+ticketIdWatched)
+  }
+
+  addAssignedTicketToEmployee(assignTicketToEmployeeDto: AssignTicketToEmployeeDto){
+    return this.http.post<any>(Employee_URL.assignTicketToEmployeeById, assignTicketToEmployeeDto)
   }
 
   constructor(

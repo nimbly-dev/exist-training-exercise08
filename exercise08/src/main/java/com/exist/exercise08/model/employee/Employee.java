@@ -67,8 +67,7 @@ public class Employee implements Serializable{
     @Setter
     private Department department;
 
-    @OneToMany(mappedBy = "assignedEmployee", fetch = FetchType.LAZY, cascade = CascadeType.ALL
-    ,orphanRemoval = true)
+    @OneToMany(mappedBy = "assignedEmployee", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Nullable
     @JsonManagedReference
     private Set<Ticket> assignedTickets;

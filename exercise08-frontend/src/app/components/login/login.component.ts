@@ -1,8 +1,8 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LoginDto } from 'src/app/model/loginDto';
-import { User } from 'src/app/model/user';
+import { LoginDto } from 'src/app/model/auth/loginDto';
+import { User } from 'src/app/model/auth/user';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { UserService } from 'src/app/services/user.service';
 

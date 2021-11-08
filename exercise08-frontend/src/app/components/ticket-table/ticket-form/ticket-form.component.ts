@@ -2,13 +2,13 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { EmployeeService } from 'src/app/services/employee.service';
 import { TicketService } from 'src/app/services/ticket.service';
-import { Employee } from 'src/app/model/employee';
+import { Employee } from 'src/app/model/employee/employee';
 import { status } from 'src/app/model/constants/status';
 import { severity } from 'src/app/model/constants/severity';
-import { NewTicket } from 'src/app/model/addNewTicketDto';
+import { NewTicket } from 'src/app/model/ticket/addNewTicketDto';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { Router } from '@angular/router';
-import { User } from 'src/app/model/user';
+import { User } from 'src/app/model/auth/user';
 
 @Component({
   selector: 'app-ticket-form',

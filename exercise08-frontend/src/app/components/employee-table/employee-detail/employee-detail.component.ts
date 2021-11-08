@@ -3,11 +3,14 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { departments } from 'src/app/model/constants/departments';
-import { Employee } from 'src/app/model/employee';
-import { UpdateEmployeeDto } from 'src/app/model/updateEmployeeDto';
-import { User } from 'src/app/model/user';
+import { Employee } from 'src/app/model/employee/employee';
+import { UpdateEmployeeDto } from 'src/app/model/employee/updateEmployeeDto';
+import { User } from 'src/app/model/auth/user';
 import { EmployeeService } from 'src/app/services/employee.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
+import { TicketService } from 'src/app/services/ticket.service';
+import { Ticket } from 'src/app/model/ticket/ticket';
+import { AssignTicketToEmployeeDto } from 'src/app/model/employee/assignTicketToEmployeeDto';
 
 @Component({
   selector: 'app-employee-detail',
@@ -21,14 +24,18 @@ export class EmployeeDetailComponent implements OnInit {
   form!: FormGroup;
 
   employee?: any
+  ticketList?: any
   departments?: any
+
+  selectedAssignTicketId: Number = 0
 
   constructor(
     private storageService: TokenStorageService,
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private router: Router,
-    private employeeService: EmployeeService
+    private employeeService: EmployeeService,
+    private ticketService: TicketService
   ) {
     this.departments = departments
     this.form = this.formBuilder.group({
@@ -46,6 +53,7 @@ export class EmployeeDetailComponent implements OnInit {
       this.router.navigate(['/login'])
     }
    this.getEmployeeDetail(this.route.snapshot.params.id)
+   this.getTicketList()
   }
 
   async getEmployeeDetail(id: Number){
@@ -62,6 +70,55 @@ export class EmployeeDetailComponent implements OnInit {
       .catch(error=>{
         console.log(error.error.message)
       })
+  }
+
+  async getTicketList(){
+    await this.ticketService.getTicketList()
+      .toPromise().then((response)=>{
+        this.ticketList = response as Ticket[]
+      })
+      .catch(error=>{
+        console.log(error.error.message)
+      })
+  }
+
+  assignTicketToEmployee(){
+    let assignNewTicketToEmployee: AssignTicketToEmployeeDto = {
+      employeeId: this.route.snapshot.params.id,
+      ticketIdAssigned: this.selectedAssignTicketId
+    }
+    this.employeeService.addAssignedTicketToEmployee(assignNewTicketToEmployee)
+      .subscribe((response)=>{
+        console.log('Added')
+        console.log(response)
+      },(error)=>{
+        console.log(error)
+        window.alert(error.error.message)
+      })
+    // this.employeeService
+  }
+
+  removeWatcher(id: Number){
+    this.employeeService.removeTicketWatched(this.route.snapshot.params.id,id)
+      .subscribe((response)=>{
+        window.alert('Ticket Watched Removed')
+        console.log(response)
+      },(error)=>{
+        console.log(error)
+      })
+  }
+
+  removeAssignedTicket(id: Number){
+    this.employeeService.removeAssignedTicketById(this.route.snapshot.params.id,id)
+      .subscribe((response)=>{
+        window.alert('Assigned Ticket Removed')
+      },(error)=>{
+        console.log(error)
+      })
+  }
+
+  onChangeAssignedTicketInput(id: Number){
+    this.selectedAssignTicketId = id
   }
 
   onSubmit(event : MouseEvent): void{
@@ -93,16 +150,4 @@ export class EmployeeDetailComponent implements OnInit {
     }
   }
 
-
-  // deleteTutorial(): void {
-  //   this.tutorialService.delete(this.currentTutorial.id)
-  //     .subscribe(
-  //       response => {
-  //         console.log(response);
-  //         this.router.navigate(['/tutorials']);
-  //       },
-  //       error => {
-  //         console.log(error);
-  //       });
-  // }
 }

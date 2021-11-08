@@ -3,12 +3,12 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { severity } from 'src/app/model/constants/severity';
 import { status } from 'src/app/model/constants/status';
-import { Employee } from 'src/app/model/employee';
-import { UpdateTicket } from 'src/app/model/updateTicketDto';
-import { User } from 'src/app/model/user';
+import { Employee } from 'src/app/model/employee/employee';
+import { User } from 'src/app/model/auth/user';
 import { EmployeeService } from 'src/app/services/employee.service';
 import { TicketService } from 'src/app/services/ticket.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
+import { UpdateTicket } from 'src/app/model/ticket/updateTicketDto';
 
 @Component({
   selector: 'app-ticket-detail',
@@ -64,7 +64,6 @@ export class TicketDetailComponent implements OnInit {
     this.getWatchers(this.route.snapshot.params.id)
     this.getEmployeeList()
     this.getAssignedEmployee(this.route.snapshot.params.id)
-    // this.getEmployeeList()
     this.getTicketDetail(this.route.snapshot.params.id)
 
   }
@@ -73,7 +72,6 @@ export class TicketDetailComponent implements OnInit {
     await this.ticketService.getTicketById(id)
       .toPromise().then((response)=>{
         this.ticket = response
-        // console.log(this.ticket)
         this.form = this.formBuilder.group({
           ticketTitle: this.ticket.title,
           ticketDesc: this.ticket.description,
@@ -104,7 +102,6 @@ export class TicketDetailComponent implements OnInit {
     await this.ticketService.getAssignedEmployeeById(id)
       .toPromise().then((response)=>{
         this.assignedEmployee = response as Employee
-        // console.log(this.assignedEmployees)
       })
       .catch((error)=>{
         console.log(error.error.message)
@@ -122,7 +119,6 @@ export class TicketDetailComponent implements OnInit {
       })
   }
 
-  //TODO add change assigned employee and add more watchers
   onSubmit(event : MouseEvent): void{
     if(event == "DELETE_TICKET" as unknown){
       // console.log("Delete")
@@ -145,8 +141,6 @@ export class TicketDetailComponent implements OnInit {
         watchersEmployeeId: this.currentTicketWatchersId
       }
 
-      // console.log(ticketToBeUpdated)
-
       this.ticketService.updateTicketById(ticketToBeUpdated,this.route.snapshot.params.id)//ticket/1
         .subscribe((response)=>{
           console.log(response)
@@ -157,12 +151,10 @@ export class TicketDetailComponent implements OnInit {
   }
 
   addWatcherToWatchersArray(){
-
     if(this.currentTicketWatchersId.includes(this.selectedWatcher)){
       window.alert('Already Included')
     }else{
       console.log(this.currentTicketWatchersId.push(this.selectedWatcher))
-      // console.log(this.currentTicketWatchersId);
     }
 
   }

@@ -10,6 +10,7 @@ import { EmployeeFormComponent } from './components/employee-table/employee-form
 import { TicketTableComponent } from './components/ticket-table/ticket-table.component';
 import { TicketDetailComponent } from './components/ticket-table/ticket-detail/ticket-detail.component';
 import { TicketFormComponent } from './components/ticket-table/ticket-form/ticket-form.component';
+import { ErrorPageComponent } from './components/error-page/error-page.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '', pathMatch: 'full' },
@@ -22,6 +23,7 @@ const routes: Routes = [
   { path: 'ticket/add', component: TicketFormComponent},
   { path: 'employee/:id', component: EmployeeDetailComponent},
   { path: 'ticket/:id', component: TicketDetailComponent},
+  { path: '**', pathMatch: 'full',  component: ErrorPageComponent },
 ];
 @NgModule({
   imports: [ RouterModule.forRoot(routes) ],
