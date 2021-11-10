@@ -15,16 +15,16 @@ export class TicketService {
     return this.http.get<Ticket[]>(Ticket_URL.getTicketList)
   }
 
-  getWatchersById(id: Number): Observable<Employee[]>{
-    return this.http.get<Employee[]>(Ticket_URL.getWatchersById+""+id)
+  getWatchersById(id: Number): Promise<any>{
+    return this.http.get<Employee[]>(Ticket_URL.getWatchersById+""+id).toPromise()
   }
 
-  getAssignedEmployeeById(id: Number): Observable<Employee>{
-    return this.http.get<Employee>(Ticket_URL.getAssignedEmployeeById+""+id)
+  getAssignedEmployeeById(id: Number): Promise<Employee>{
+    return this.http.get<Employee>(Ticket_URL.getAssignedEmployeeById+""+id).toPromise()
   }
 
-  getTicketById(id: Number): Observable<any>{
-    return this.http.get<any>(Ticket_URL.getTicketById+""+id)
+  getTicketById(id: Number): Promise<any>{
+    return this.http.get<any>(Ticket_URL.getTicketById+""+id).toPromise()
   }
 
   addNewTicket(ticket: NewTicket): Observable<any>{
@@ -38,6 +38,12 @@ export class TicketService {
   updateTicketById(ticketToUpdate: any, id: Number): Observable<any>{
     return this.http.put<any>(Ticket_URL.updateTicketById+''+id,ticketToUpdate)
   }
+
+  removeEmployeeWatcher(ticketId: Number, employeeIdWatcherToBeDeleted: Number){
+    return this.http.delete(Ticket_URL.removeEmployeeWatcher
+      +"ticketId="+ticketId+"&employeeIdWatcherToBeDeleted="+employeeIdWatcherToBeDeleted)
+  }
+
 
   constructor(
     private http: HttpClient

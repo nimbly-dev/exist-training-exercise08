@@ -45,7 +45,7 @@ public class EmployeeRecordsController {
            || StringUtils.isBlank(employee.getLastName()) 
            || employee.getDepartment() == null){
                 throw new ResponseStatusException
-                    (HttpStatus.BAD_REQUEST, "Name and Department must not be blank");
+                    (HttpStatus.BAD_REQUEST, "Name or Department must not be blank");
         } 
         Employee saveNewEmployee = new Employee(employee.getFirstName()
             , employee.getMiddleName(), employee.getLastName(), employee.getDepartment());
@@ -130,6 +130,7 @@ public class EmployeeRecordsController {
 
         employee.get().getAssignedTickets().add(ticketAssigned.get());
 
+        employeeRepo.save(employee.get());
         return ResponseEntity.ok(new MessageResponseDto("Ticket Assigned successfully changed"));
     }
 
@@ -151,11 +152,8 @@ public class EmployeeRecordsController {
         }
 
         ticketWatched.get().removeWatcher(employee.get());
-        // employee.get().removeTicketsWatched(ticketWatched.get());
         employeeRepo.save(employee.get());
 
-        // employee.get().removeTicketsWatched(ticketWatched.get());
-        // ticketRepo.save(ticketWatched.get());
 
         return ResponseEntity.ok(new MessageResponseDto("Ticket watched successfully removed"));
     }

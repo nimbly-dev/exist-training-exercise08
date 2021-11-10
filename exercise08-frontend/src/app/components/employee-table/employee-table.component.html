@@ -1,7 +1,9 @@
 <h3>List of Employees</h3>
-<a [href]="'/employee/add'">Add new Employee</a> <br>
-<a [href]="'/home'">Go to Home</a>
 <section>
+  <div *ngIf="employeeList.length == 0">
+    <h2>Employee list appears to be empty</h2>
+  </div>
+
   <table *ngFor="let employee of employeeList">
     <tr>
       <th>Employee Id</th>
@@ -9,9 +11,6 @@
       <th>Middlename</th>
       <th>Lastname</th>
       <th>Department</th>
-      <!-- <th>Assigned Tickets</th>
-      <th>Tickets Watched</th> -->
-      <th>Actions</th>
     </tr>
     <tr>
       <td>
@@ -22,41 +21,9 @@
       <td>{{employee.lastName}}</td>
       <td>{{employee.middleName}}</td>
       <td>{{employee.department}}</td>
-
-      <!-- <td>
-
-        <span *ngIf='!employee.assignedTickets?.length;else employeeAssignedTickets'>
-          Empty
-        </span>
-
-        <ng-template #employeeAssignedTickets>
-          <span *ngFor="let ticket of employee.assignedTickets">
-            {{ticket.title}}
-          </span>
-        </ng-template>
-
-      </td>
-
-      <td>
-
-        <span *ngIf='!employee.ticketsWatched?.length;else employeeTicketsWatched'>
-          Empty
-        </span>
-
-        <ng-template #employeeTicketsWatched>
-          <span *ngFor="let ticket of employee.ticketsWatched">
-            {{ticket.title}}
-          </span>
-        </ng-template>
-
-      </td> -->
-
-      <td>
-        <button type="button">Update!</button>
-        <button type="button">Delete!</button>
-      </td>
     </tr>
 
   </table>
 </section>
-
+<a [href]="'/employee/add'">Add new Employee</a> <br>
+<a [href]="'/home'">Go to Home</a>

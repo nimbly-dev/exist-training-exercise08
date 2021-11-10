@@ -39,6 +39,7 @@ export class EmployeeTableComponent implements OnInit {
       })
       .catch((error)=>{
         console.log(error.error.message)
+        this.employeeList = []
       })
   }
 

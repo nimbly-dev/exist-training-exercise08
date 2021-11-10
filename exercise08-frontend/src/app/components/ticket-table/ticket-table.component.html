@@ -1,7 +1,10 @@
 <h3>List of Tickets</h3>
-<a [href]="'/ticket/add'">Add new Ticket</a> <br>
-<a [href]="'/home'">Go to Home</a>
 <section>
+<!--
+  <div *ngIf="ticketList.length == 0">
+    <h2>Ticket list appears to be empty</h2>
+  </div> -->
+
   <table *ngFor="let ticket of ticketList">
     <th>Id</th>
     <th>Title</th>
@@ -28,3 +31,5 @@
     </tr>
   </table>
 </section>
+<a [href]="'/ticket/add'">Add new Ticket</a> <br>
+<a [href]="'/home'">Go to Home</a>

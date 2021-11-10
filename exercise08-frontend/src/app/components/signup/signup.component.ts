@@ -37,7 +37,8 @@ export class SignupComponent implements OnInit {
       console.log("selected")
       this.selectedRoles.push(role)
 
-    }else{
+    }
+    else{
       console.log("deselcted")
       const index = this.selectedRoles.findIndex(x=> x === role)
       this.selectedRoles.splice(index,1)
@@ -66,9 +67,9 @@ export class SignupComponent implements OnInit {
         this.errorMssg = err.error.message
         console.log(this.errorMssg)
       }
-      )
-  }
+    )
 
+  }
 
   ngOnInit(): void { }
 

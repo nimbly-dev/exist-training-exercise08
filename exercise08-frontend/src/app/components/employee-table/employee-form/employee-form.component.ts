@@ -29,7 +29,7 @@ export class EmployeeFormComponent implements OnInit {
       firstName: '',
       middleName: '',
       lastName: '',
-      department: ''
+      department: departments.ADMIN
     })
   }
 
@@ -52,8 +52,11 @@ export class EmployeeFormComponent implements OnInit {
     this.employeeService.addNewEmployee(newEmployee)
       .subscribe((response)=>{
         console.log(response)
+        window.alert('Successfully added, now redirecting to employee table page')
+      this.router.navigate(['/employee'])
       },(error)=>{
-        console.log(error.error.messsage)
+        console.log(error)
+        window.alert(error.error.message)
       })
   }
 

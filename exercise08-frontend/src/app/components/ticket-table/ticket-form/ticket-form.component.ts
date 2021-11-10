@@ -43,8 +43,8 @@ export class TicketFormComponent implements OnInit {
     this.form = this.formBuilder.group({
       title: '',
       description: '',
-      severity: '',
-      status: '',
+      severity: severity.NORMAL,
+      status: status.NEW,
       assignedEmployee: 0
       // watchers: [] Can't implement to angular html templating
       // ticketsWatched: Employee[],

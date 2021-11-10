@@ -39,7 +39,9 @@ export class TicketTableComponent implements OnInit {
         console.log(this.ticketList)
       })
       .catch((error)=>{
+        this.ticketList = []
         console.log(error.error.message)
+        this.ticketList = []
       })
   }
 

@@ -51,6 +51,14 @@ public class TicketController {
 
         Optional<Employee> getAssignedEmployee = employeeRepo.findById(ticket.getAssignedEmployeeId());
 
+        if(StringUtils.isBlank(ticket.getTitle())
+            || StringUtils.isBlank(ticket.getDescription())
+            || ticket.getSeverity() == null
+            || ticket.getStatus() == null){
+            throw new ResponseStatusException 
+                (HttpStatus.BAD_REQUEST, "Inputs must not be blank ");
+        }
+
         if(!getAssignedEmployee.isPresent()){
             throw new ResponseStatusException
                 (HttpStatus.NOT_FOUND, "Employee id " +
@@ -161,11 +169,36 @@ public class TicketController {
         return ResponseEntity.ok(ticketLists);
     }
 
+    @DeleteMapping("/delete-employee-watcher")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deleteAssignedEmployee(Long ticketId, Long employeeIdWatcherToBeDeleted){
+        Optional<Ticket> ticket = ticketRepo.findById(ticketId);
+        Optional<Employee> employeeWatcher = employeeRepo.findById(employeeIdWatcherToBeDeleted);
+
+        if(!ticket.isPresent()){
+            throw new ResponseStatusException
+                (HttpStatus.NOT_FOUND, "Ticket id " + ticketId + " does not exist");
+        }
+
+        if(!employeeWatcher.isPresent()){
+            throw new ResponseStatusException
+                (HttpStatus.NOT_FOUND, "Employee id " + employeeIdWatcherToBeDeleted + " does not exist");
+        }
+
+        employeeWatcher.get().removeTicketsWatched(ticket.get());
+        ticket.get().removeWatcher(employeeWatcher.get());
+
+        ticketRepo.save(ticket.get());
+
+        return ResponseEntity.ok(new MessageResponseDto("Employee Watcher deleted successfully!"));
+    }
+
     @PutMapping("/update-ticket-by-id")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateTicketById(@RequestBody TicketDto ticketNewValue, Long id){
         Optional<Ticket> ticketToUpdate = ticketRepo.findById(id);
         Optional<Employee> findEmployee = employeeRepo.findById(ticketNewValue.getAssignedEmployeeId());
+
 
         if(!ticketToUpdate.isPresent()){
             throw new ResponseStatusException
@@ -174,7 +207,7 @@ public class TicketController {
 
         if(!findEmployee.isPresent()){
             throw new ResponseStatusException
-                (HttpStatus.NOT_FOUND, "Employee id " + id + " does not exist");
+                (HttpStatus.NOT_FOUND, "Employee id " + ticketNewValue.getAssignedEmployeeId() + " does not exist");
         }
 
         if(StringUtils.isBlank(ticketNewValue.getTitle())
@@ -216,14 +249,6 @@ public class TicketController {
 
         Optional<Ticket> ticketToDelete = ticketRepo.findById(id);
 
-        // for(Ticket ticket: ticketToDelete.get().getAssignedEmployee().getTicketsWatched()){
-        //     // ticket.get
-        //     // ticket.removeWatcher(ticket.getAssignedEmployee());
-        //     // ticket.getAssignedEmployee().removeAssignedTicket(ticket);
-        //     ticketToDelete.get().removeWatcher(ticket.getAssignedEmployee());
-        //     ticketToDelete.get().removeAssignedEmployee(ticket);
-        //     // ticket.removeWatcher(ticket.getAssignedEmployee());
-        // }
         ticketToDelete.get().getAssignedEmployee().removeAssignedTicket(ticketToDelete.get());
         ticketToDelete.get().getWatchers().clear();
         // ticketRepo.delete(ticketToDelete.get());
