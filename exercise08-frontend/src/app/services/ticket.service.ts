@@ -11,8 +11,8 @@ import { Ticket } from '../model/ticket/ticket';
 })
 export class TicketService {
 
-  getTicketList(): Observable<Ticket[]>{
-    return this.http.get<Ticket[]>(Ticket_URL.getTicketList)
+  getTicketList(): Promise<any>{
+    return this.http.get<Ticket[]>(Ticket_URL.getTicketList).toPromise()
   }
 
   getWatchersById(id: Number): Promise<any>{

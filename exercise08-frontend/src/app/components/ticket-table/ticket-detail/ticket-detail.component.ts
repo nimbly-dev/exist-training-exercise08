@@ -131,15 +131,19 @@ export class TicketDetailComponent implements OnInit {
 
   }
 
-  async getEmployeeList(): Promise<void>{
-    await this.employeeService.getEmployeeList()
-      .toPromise().then((response)=>{
-        this.employeeList = response as Employee[]
-        // return response as Employee[]
-      })
-      .catch((error)=>{
-        console.log(error.error.message)
-      })
+  getEmployeeList(){
+    const promise = new Promise((resolve,reject)=>{
+      this.employeeService.getEmployeeList()
+        .then((response)=>{
+          this.employeeList = response as Employee[]
+          resolve(response)
+        },err=>{
+          reject(err)
+        })
+    })
+
+    return promise
+
   }
 
   onSubmit(event : MouseEvent): void{

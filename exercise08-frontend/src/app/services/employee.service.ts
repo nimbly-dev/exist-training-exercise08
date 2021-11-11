@@ -10,8 +10,8 @@ import { Employee_URL } from '../model/string_endpoints/employee_urls';
 })
 export class EmployeeService {
 
-  getEmployeeList(): Observable<Employee[]> {
-    return this.http.get<Employee[]>(Employee_URL.listAllEmployees)
+  getEmployeeList(): Promise<any> {
+    return this.http.get<Employee[]>(Employee_URL.listAllEmployees).toPromise()
   }
 
   getEmployeeById(id: Number): Observable<Employee>{

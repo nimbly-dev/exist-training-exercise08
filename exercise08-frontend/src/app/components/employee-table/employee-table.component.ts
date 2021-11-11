@@ -31,16 +31,19 @@ export class EmployeeTableComponent implements OnInit {
     this.employeeList = this.getEmployeeList()
   }
 
-  async getEmployeeList(){
-    await this.employeeService.getEmployeeList()
-      .toPromise().then((response)=>{
-        this.employeeList = response as Employee[]
-        console.log(this.employeeList)
-      })
-      .catch((error)=>{
-        console.log(error.error.message)
-        this.employeeList = []
-      })
+  getEmployeeList(){
+    const promise = new Promise((resolve,reject)=>{
+      this.employeeService.getEmployeeList()
+        .then((response)=>{
+          this.employeeList = response as Employee[]
+          resolve(response)
+        },err=>{
+          reject(err)
+        })
+    })
+
+    return promise
+
   }
 
 }

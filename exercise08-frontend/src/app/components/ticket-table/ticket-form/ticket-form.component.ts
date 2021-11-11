@@ -64,15 +64,19 @@ export class TicketFormComponent implements OnInit {
     this.severity = severity
   }
 
-  async getEmployeeList(){
-    await this.employeeService.getEmployeeList()
-      .toPromise().then((response)=>{
-        this.employeeList = response as Employee[]
-        // console.log(this.employeeList)
-      })
-      .catch((error)=>{
-        console.log(error.error.message)
-      })
+  getEmployeeList(){
+
+    const promise = new Promise((resolve,reject)=>{
+      this.employeeService.getEmployeeList()
+        .then((response)=>{
+          this.employeeList = response as Employee[]
+          resolve(response)
+        },err=>{
+          reject(err)
+        })
+    })
+
+    return promise
   }
 
   addWatcherToWatchersArray(){

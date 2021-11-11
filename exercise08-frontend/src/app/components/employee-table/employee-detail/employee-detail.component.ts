@@ -72,14 +72,27 @@ export class EmployeeDetailComponent implements OnInit {
       })
   }
 
-  async getTicketList(){
-    await this.ticketService.getTicketList()
-      .toPromise().then((response)=>{
-        this.ticketList = response as Ticket[]
-      })
-      .catch(error=>{
-        console.log(error.error.message)
-      })
+  getTicketList(){
+
+    const promise = new Promise((resolve,reject)=>{
+      this.employeeService.getEmployeeList()
+        .then((response)=>{
+          this.ticketList = response as Ticket[]
+          resolve(response)
+        },err=>{
+          reject(err)
+        })
+    })
+
+    return promise
+
+    // await this.ticketService.getTicketList()
+    //   .toPromise().then((response)=>{
+    //     this.ticketList = response as Ticket[]
+    //   })
+    //   .catch(error=>{
+    //     console.log(error.error.message)
+    //   })
   }
 
   assignTicketToEmployee(){

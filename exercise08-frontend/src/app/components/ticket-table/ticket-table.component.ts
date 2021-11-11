@@ -29,20 +29,34 @@ export class TicketTableComponent implements OnInit {
       this.router.navigate(['/login'])
     }
 
-    this.ticketList = this.getTicketList()
+    this.getTicketList()
   }
 
+
   async getTicketList(){
-    await this.ticketService.getTicketList()
-      .toPromise().then((response)=>{
-        this.ticketList = response as Ticket[]
-        console.log(this.ticketList)
-      })
-      .catch((error)=>{
-        this.ticketList = []
-        console.log(error.error.message)
-        this.ticketList = []
-      })
+
+    const promise = new Promise((resolve,reject)=>{
+      this.ticketService.getTicketList()
+        .then((response)=>{
+          this.ticketList = response as Ticket[]
+          resolve(response)
+        },err=>{
+          reject(err)
+        })
+    })
+
+    return promise
+
+    // await this.ticketService.getTicketList()
+    //   .toPromise().then((response)=>{
+    //     this.ticketList = response as Ticket[]
+    //     console.log(this.ticketList)
+    //   })
+    //   .catch((error)=>{
+    //     this.ticketList = []
+    //     console.log(error.error.message)
+    //     this.ticketList = []
+    //   })
   }
 
 
