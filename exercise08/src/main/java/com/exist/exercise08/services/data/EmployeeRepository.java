@@ -9,6 +9,4 @@ import com.exist.exercise08.model.ticket.Ticket;
 import org.springframework.data.repository.CrudRepository;
 
 public interface EmployeeRepository extends CrudRepository <Employee,Long> {
-    // List<Employee> findAssignedEmployeeByTicketId(Long id);
-
  }

@@ -1,17 +1,13 @@
-package com.exist.exercise08.services.controller;
+package com.exist.exercise08.controller;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.exist.exercise08.model.payload.login.LoginRequestDto;
 import com.exist.exercise08.model.payload.login.SignUpRequestDto;
 import com.exist.exercise08.model.payload.registration.JwtResponseDto;
 import com.exist.exercise08.model.payload.registration.MessageResponseDto;
-import com.exist.exercise08.model.user.ERole;
-import com.exist.exercise08.model.user.Role;
-import com.exist.exercise08.model.user.User;
+import com.exist.exercise08.services.AuthService;
 import com.exist.exercise08.services.data.RoleRepository;
 import com.exist.exercise08.services.data.UserRepository;
 import com.exist.exercise08.services.impl.UserDetailsImpl;
@@ -49,6 +45,9 @@ public class AuthController {
 	@Autowired
 	PasswordEncoder encoder;
 
+	@Autowired
+	AuthService authService;
+
     @Autowired
 	JwtUtils jwtUtils;
 
@@ -78,60 +77,17 @@ public class AuthController {
 	}
 
 	@CrossOrigin(origins = "http://localhost:4200")
-    @PostMapping("/signup") //TODO - RE-STUDY THIS METHOD
+    @PostMapping("/signup") 
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequestDto signUpRequest) {
-		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-			return ResponseEntity
-					.badRequest()
-					.body(new MessageResponseDto("Error: Username is already taken!"));
-		}
 
-		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-			return ResponseEntity
-					.badRequest()
-					.body(new MessageResponseDto("Error: Email is already in use!"));
-		}
+		authService.checkIfUsernameExist(signUpRequest);
+		authService.checkIfEmailExist(signUpRequest);
 
-		if(signUpRequest.getUsername().isEmpty() ||
-		   signUpRequest.getPassword().isEmpty() ||
-		   signUpRequest.getEmail().isEmpty()    ||
-		   signUpRequest.getRole().isEmpty()){
-			return ResponseEntity
-					.badRequest()
-					.body(new MessageResponseDto("Error: inputs must not be empty"));
-		}		
+		authService.checkIfInputsAreBlank(signUpRequest);
 
 		// Create new user's account
-		User user = new User(signUpRequest.getUsername(), 
-							 signUpRequest.getEmail(),
-							 encoder.encode(signUpRequest.getPassword()));
-
-		Set<String> strRoles = signUpRequest.getRole();
-		Set<Role> roles = new HashSet<>();
-
-		if (strRoles == null) {
-			Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-			roles.add(userRole);
-		} else {
-			strRoles.forEach(role -> {
-				switch (role) {
-					case "admin":
-						Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-								.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-						roles.add(adminRole);
-
-						break;
-					default:
-						Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-								.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-						roles.add(userRole);
-				}
-			});
-		}
-
-		user.setRoles(roles);
-		userRepository.save(user);
+		authService.createNewUser(signUpRequest);
+		
 
 		return ResponseEntity.ok(new MessageResponseDto("User registered successfully!"));
 	}
