@@ -19,5 +19,5 @@
     3. Open exercise08-frontend which is the frontend directory,
        then using your command-line enter command: "ng serve --open"
     
-    4. An tab will be opened by your default browser navigating you to
+    4. A tab will be opened by your default browser navigating you to
        the starting page.
