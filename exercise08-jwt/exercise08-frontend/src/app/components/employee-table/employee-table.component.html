@@ -1,0 +1,29 @@
+<h3>List of Employees</h3>
+<section>
+  <div *ngIf="employeeList.length == 0">
+    <h2>Employee list appears to be empty</h2>
+  </div>
+
+  <table *ngFor="let employee of employeeList">
+    <tr>
+      <th>Employee Id</th>
+      <th>Firstname</th>
+      <th>Middlename</th>
+      <th>Lastname</th>
+      <th>Department</th>
+    </tr>
+    <tr>
+      <td>
+        <!-- {{employee.id}} -->
+        <a [href]="'employee/'+employee.id">{{employee.id}}</a>
+      </td>
+      <td>{{employee.firstName}}</td>
+      <td>{{employee.lastName}}</td>
+      <td>{{employee.middleName}}</td>
+      <td>{{employee.department}}</td>
+    </tr>
+
+  </table>
+</section>
+<a [href]="'/employee/add'">Add new Employee</a> <br>
+<a [href]="'/home'">Go to Home</a>

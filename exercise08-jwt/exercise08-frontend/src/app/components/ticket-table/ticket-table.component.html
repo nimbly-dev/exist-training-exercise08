@@ -1,0 +1,35 @@
+<h3>List of Tickets</h3>
+<section>
+<!--
+  <div *ngIf="ticketList.length == 0">
+    <h2>Ticket list appears to be empty</h2>
+  </div> -->
+
+  <table *ngFor="let ticket of ticketList">
+    <th>Id</th>
+    <th>Title</th>
+    <th>Description</th>
+    <th>Severity</th>
+    <th>Status</th>
+    <tr>
+      <td>
+        <a [href]="'ticket/'+ticket.id">{{ticket.id}}</a>
+      </td>
+      <td>
+        {{ticket.title}}
+      </td>
+      <td>
+        {{ticket.description}}
+      </td>
+      <td>
+        {{ticket.severity}}
+      </td>
+      <td>
+        {{ticket.status}}
+      </td>
+
+    </tr>
+  </table>
+</section>
+<a [href]="'/ticket/add'">Add new Ticket</a> <br>
+<a [href]="'/home'">Go to Home</a>

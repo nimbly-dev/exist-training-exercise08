@@ -1,0 +1,73 @@
+Employee ID: {{employee.id}}
+<form [formGroup]="form" (ngSubmit)="onSubmit($event.submitter.id)">
+
+  <label for="firstName">First name:</label><br>
+  <input type="text"
+  [value]="employee.firstName" formControlName="firstname"><br>
+
+  <label for="middleName">Middle name:</label><br>
+  <input type="text"
+    [value]="employee.middleName" formControlName="middlename"><br>
+
+  <label for="lastName">Last name:</label><br>
+  <input type="text"
+    [value]="employee.lastName" formControlName="lastname" ><br>
+
+
+  <label for="departments">Department </label>:
+  <select name="department" formControlName="department">
+      <option [value]="department.value" *ngFor="let department of departments | keyvalue"
+        [selected]="employee.department == department.value">
+        {{department.value}}
+      </option>
+  </select>
+
+  <br>
+
+  <label for="assignedTicket">Choose Assigned Employee </label>:
+  <select name="assignedTicket" (change)="onChangeAssignedTicketInput($any($event.target).value)">
+    <option selected="selected" disabled>
+      Choose Assigned Tickets
+    </option>
+      <option [value]="ticket.id" *ngFor="let ticket of ticketList">
+         {{ticket.id}} - {{ticket.title}}
+      </option>
+  </select><br>
+  <button type="button" (click)="assignTicketToEmployee()">Assign new ticket</button>
+
+  <h3>Tickets Assigned:</h3>
+  <ul *ngFor="let ticket of employee.assignedTickets">
+    <li>
+      Ticket ID: {{ticket.id}} <br>
+      Ticket Title: {{ticket.title}} <br>
+      Ticket Severity: {{ticket.severity}} <br>
+      Ticket Status: {{ticket.status}} <br>
+      Action:
+      <br>
+      <button type="button" (click)="removeAssignedTicket(ticket.id)" disabled>REMOVE</button>
+      <br>
+    </li>
+  </ul>
+
+  <br>
+
+  <h3>Tickets Watched: </h3>
+  <ul *ngFor="let ticket of employee.ticketsWatched">
+    <li>
+      Ticket ID: {{ticket.id}} <br>
+      Ticket Title: {{ticket.title}} <br>
+      Ticket Severity: {{ticket.severity}} <br>
+      Ticket Status: {{ticket.status}} <br>
+      Action: <button type="button"  (click)="removeWatcher(ticket.id)">REMOVE</button>
+    </li>
+  </ul>
+
+  <br>
+
+  <button type="submit" id="UPDATE_EMPLOYEE" value="UPDATE_EMPLOYEE">UPDATE EMPLOYEE</button>
+  |
+  <button type="submit" id="DELETE_EMPLOYEE">DELETE EMPLOYEE</button>
+
+  <br>
+  <a [href]="'/employee'">Go Back</a>
+</form>
