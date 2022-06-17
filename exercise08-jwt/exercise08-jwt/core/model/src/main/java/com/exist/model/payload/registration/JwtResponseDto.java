@@ -20,7 +20,4 @@ public class JwtResponseDto {
         this.email = email;
         this.roles = roles;
     }
-
-
-    
 }

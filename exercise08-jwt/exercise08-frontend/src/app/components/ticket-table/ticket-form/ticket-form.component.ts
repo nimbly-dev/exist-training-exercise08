@@ -24,11 +24,8 @@ export class TicketFormComponent implements OnInit {
   public status?: any;
   public severity?: any
 
-  // public assignedEmployee: Number
   public selectedWatcher: Number = 0
   public selectedWatchers: Number[] = []
-  // public watcherToBeAdded: Number = 0
-  // public displayWatchers: Employee[]
 
   constructor(
     private storageService: TokenStorageService,
@@ -37,17 +34,12 @@ export class TicketFormComponent implements OnInit {
     private employeeService: EmployeeService,
     private formBuilder: FormBuilder
   ) {
-    // this.assignedEmployee = 0
-    // this.watcherToBeAdded = 0
-    // this.displayWatchers = []
     this.form = this.formBuilder.group({
       title: '',
       description: '',
       severity: severity.NORMAL,
       status: status.NEW,
       assignedEmployee: 0
-      // watchers: [] Can't implement to angular html templating
-      // ticketsWatched: Employee[],
     })
   }
 

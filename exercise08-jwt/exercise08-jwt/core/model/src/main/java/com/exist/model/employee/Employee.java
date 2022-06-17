@@ -111,10 +111,7 @@ public class Employee implements Serializable{
         return ticketsWatched;
     }
 
-
     public void setTicketsWatched(Set<Ticket> ticketsWatched) {
         this.ticketsWatched = ticketsWatched;
     }
-    
-    
 }

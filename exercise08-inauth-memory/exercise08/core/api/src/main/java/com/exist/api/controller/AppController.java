@@ -11,7 +11,6 @@ public class AppController {
 
     @GetMapping("/")
     public ResponseEntity<?> index(){
-
         return ResponseEntity.ok(new MessageResponseDto("Succesfully getted"));
     }
 }
